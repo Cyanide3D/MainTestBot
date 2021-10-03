@@ -12,5 +12,6 @@
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
         <property name="hibernate.show_sql">false</property>
         <mapping class="ru.cyanide3d.bot.model.GuildEntity"/>
+        <mapping class="ru.cyanide3d.bot.model.PermissionEntity"/>
     </session-factory>
 </hibernate-configuration>

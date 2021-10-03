@@ -13,8 +13,8 @@ public class PermissionEntity implements DataEntity<Long> {
     private Long id;
     @Column(name = "guild_id")
     private String guildId;
-    @Enumerated(EnumType.ORDINAL)
-    private Permission permission;
+    @Basic
+    private int permission;
     @Column(name = "role_id")
     private String roleId;
 
@@ -23,7 +23,7 @@ public class PermissionEntity implements DataEntity<Long> {
 
     public PermissionEntity(String guildId, Permission permission, String roleId) {
         this.guildId = guildId;
-        this.permission = permission;
+        this.permission = permission.getCode();
         this.roleId = roleId;
     }
 
@@ -54,10 +54,10 @@ public class PermissionEntity implements DataEntity<Long> {
     }
 
     public Permission getPermission() {
-        return permission;
+        return Permission.getPermissionByCode(permission);
     }
 
     public void setPermission(Permission permission) {
-        this.permission = permission;
+        this.permission = permission.getCode();
     }
 }

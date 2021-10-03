@@ -10,30 +10,32 @@ public class SqlRequest {
 
     private final StringBuilder query;
     private final List<Pair<String, Object>> values;
+    private final List<Pair<String, List<?>>> listValues;
 
 
     public SqlRequest(String guildId) {
         this.query = new StringBuilder();
         this.values = new ArrayList<>();
+        this.listValues = new ArrayList<>();
 
         query.append("from CLASSNAME C where C.guildId=:guildId");
         values.add(Pair.of("guildId", guildId));
     }
 
-    public SqlRequest addField(String field, String value) {
+    public SqlRequest equals(String field, String value) {
         query.append(" and C.").append(field).append("=:").append(field);
         values.add(Pair.of(field, value));
         return this;
     }
 
-    public SqlRequest addField(String field, List values) {
+    public SqlRequest equals(String field, List<?> values) {
         query.append(" and C.").append(field).append(" in (:").append(field).append(")");
-        values.add(Pair.of(field, values));
+        listValues.add(Pair.of(field, values));
         return this;
     }
 
-    public SqlRequest lessThan(String field, String value) {
-        query.append(" and C.").append(field).append("<:").append(field);
+    public SqlRequest lessOrEqualsThan(String field, Object value) {
+        query.append(" and C.").append(field).append("<=:").append(field);
         values.add(Pair.of(field, value));
         return this;
     }
@@ -46,15 +48,15 @@ public class SqlRequest {
 
     public String getSqlQuery(String className) {
         return query.toString().replace("CLASSNAME", className);
-//        return "from PermissionEntity C where C.guildId=:guildId and C.roleId in :roleId";
     }
 
     public <E> Query<E> setParametersToQuery(Query<E> query) {
-        if (values.isEmpty())
-            throw new UnsupportedOperationException("First take sql query use corresponding method.");
-
         for (Pair<String, Object> pair : values) {
             query.setParameter(pair.getLeft(), pair.getValue());
+        }
+
+        for (Pair<String, List<?>> listValue : listValues) {
+            query.setParameterList(listValue.getLeft(), listValue.getValue());
         }
 
         return query;
